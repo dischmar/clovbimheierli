@@ -1,5 +1,5 @@
 import * as OBC from "@thatopen/components";
-import { IdsParameters } from "./components/IdsParameters";
+import { IdsParameters } from "./plugins/IdsParameters";
 
 export interface BimWorld {
   components: OBC.Components;
@@ -24,11 +24,15 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
   world.scene.setup();
   world.scene.three.background = null;
 
+        
+
   world.renderer = new OBC.SimpleRenderer(components, container);
   world.camera = new OBC.OrthoPerspectiveCamera(components);
 
   components.init();
   components.get(OBC.Grids).create(world);
+
+  world.renderer.showLogo = false;
 
   const fragments = components.get(OBC.FragmentsManager);
   fragments.init("/worker.mjs");

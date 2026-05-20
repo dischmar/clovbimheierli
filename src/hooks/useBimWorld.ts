@@ -10,6 +10,7 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
   const [error, setError] = useState<string | null>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
+
   useEffect(() => {
     if (!containerRef.current) return;
     let disposed = false;

@@ -2,12 +2,9 @@ import { useEffect, useState, useCallback } from "react";
 import * as THREE from "three";
 import * as FRAGS from "@thatopen/fragments";
 import { BimWorld } from "../bim/world";
+import type { SelectedItem } from "../types/ifc";
 
-export interface SelectedItem {
-  localId: number;
-  modelId: string;
-  attrs: FRAGS.ItemData | null;
-}
+export type { SelectedItem };
 
 export function useRaycaster(worldRef: React.RefObject<BimWorld | null>) {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
@@ -50,7 +47,7 @@ export function useRaycaster(worldRef: React.RefObject<BimWorld | null>) {
           b.distance < a.distance ? b : a
         );
 
-        // Highlight
+        // Highlight selected element
         await closest.fragments.highlight(
           [closest.localId],
           {
@@ -63,14 +60,30 @@ export function useRaycaster(worldRef: React.RefObject<BimWorld | null>) {
         await fragments.core.update(true);
         lastResult = closest;
 
-        // Fetch attributes and update React state
-        const [attrs] = await closest.fragments.getItemsData([closest.localId]);
+        // Fetch attributes, property sets, and type properties
+        const [attrs] = await closest.fragments.getItemsData(
+          [closest.localId],
+          {
+            // Include all direct IFC attributes (Name, GlobalId, ObjectType, Tag…)
+            attributesDefault: true,
+            relations: {
+              // IfcRelDefinesByProperties → all Psets (Pset_WallCommon, custom, etc.)
+              IsDefinedBy: { attributes: true, relations: true },
+              // IfcRelDefinesByType → type-level properties (IfcWallType, etc.)
+              IsTypedBy: { attributes: true, relations: true },
+            },
+          }
+        );
+
+
+
         setSelected({
           localId: closest.localId,
           modelId: closest.fragments.modelId,
           attrs: attrs ?? null,
         });
       };
+
 
       window.addEventListener("click", onClick);
       return () => window.removeEventListener("click", onClick);

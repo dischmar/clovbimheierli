@@ -35,7 +35,6 @@ export default function BimViewer() {
           <input type="file" accept=".ifc" hidden disabled={!ready || loading} onChange={onFileChange} />
         </label>
 
-        {/* Panel toggles */}
         {modelLoaded && (
           <>
             <PanelToggle
@@ -75,15 +74,21 @@ export default function BimViewer() {
           )}
         </div>
 
-        {/* Properties panel */}
-        {activePanel === "properties" && selected && (
-          <PropertiesPanel selected={selected} onClose={() => { clearSelection(); setActivePanel(null); }} />
+        {/* Panels — always mounted when active, never conditional on selection */}
+        {activePanel === "properties" && (
+          <PropertiesPanel
+            selected={selected ?? null}
+            onClose={() => {
+              clearSelection();
+              setActivePanel(null);
+            }}
+          />
         )}
 
-        {/* IDS panel */}
         {activePanel === "ids" && (
           <IdsPanel components={components} />
         )}
+
       </div>
     </div>
   );
