@@ -3,8 +3,10 @@ import { useBimWorld } from "../hooks/useBimWorld";
 import { useRaycaster } from "../hooks/useRaycaster";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { IdsPanel } from "./IdsPanel";
+import { ClassifierPanel } from "./ClassifierPanel";
+import { FinderPanel } from "./ItemsFinder";
 
-type ActivePanel = "properties" | "ids" | null;
+type ActivePanel = "properties" | "ids" | "classifier" | "finder" | null;
 
 export default function BimViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +30,7 @@ export default function BimViewer() {
 
       {/* Top bar */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 16px", height: 48, flexShrink: 0, background: "#12121e", borderBottom: "1px solid #1e1e38" }}>
-        <span style={{ color: "#a78bfa", fontWeight: 700, fontSize: 14, fontFamily: "monospace", letterSpacing: 1, marginRight: 4 }}>BIM Viewer</span>
+        <span style={{ color: "#a78bfa", fontWeight: 700, fontSize: 14, fontFamily: "monospace", letterSpacing: 1, marginRight: 4 }}>HeierliBIM</span>
 
         <label style={{ padding: "5px 14px", borderRadius: 6, background: "#6d28d9", color: "#fff", fontSize: 12, fontWeight: 600, fontFamily: "monospace", cursor: !ready || loading ? "not-allowed" : "pointer", opacity: !ready || loading ? 0.5 : 1, userSelect: "none" }}>
           {loading ? `Converting… ${progress}%` : "Load IFC"}
@@ -46,6 +48,17 @@ export default function BimViewer() {
               label="IDS"
               active={activePanel === "ids"}
               onClick={() => togglePanel("ids")}
+            />
+            <PanelToggle
+              label="Classify"
+              active={activePanel === "classifier"}
+              onClick={() => togglePanel("classifier")}
+            />
+
+            <PanelToggle
+              label="Finder"
+              active={activePanel === "finder"}
+              onClick={() => togglePanel("finder")}
             />
           </>
         )}
@@ -87,6 +100,14 @@ export default function BimViewer() {
 
         {activePanel === "ids" && (
           <IdsPanel components={components} />
+        )}
+
+        {activePanel === "classifier" && (
+          <ClassifierPanel components={components} />
+        )}
+
+        {activePanel === "finder" && (
+          <FinderPanel components={components} />
         )}
 
       </div>

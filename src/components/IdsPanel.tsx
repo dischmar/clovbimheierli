@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import * as OBC from "@thatopen/components";
 import { IdsParameters } from "../bim/plugins/IdsParameters";
+import { FrontFunctions } from "../bim/plugins/FrontFunctions";
 import type { SpecResult } from "../types/ifc";
 import { colors } from "../styles/tokens";
 
@@ -18,6 +19,11 @@ export function IdsPanel({ components }: IdsPanelProps) {
   const getParams = useCallback((): IdsParameters | null => {
     if (!components) return null;
     try { return components.get(IdsParameters); } catch { return null; }
+  }, [components]);
+
+  const getHl = useCallback((): FrontFunctions | null => {
+    if (!components) return null;
+    try { return components.get(FrontFunctions); } catch { return null; }
   }, [components]);
 
   const handleLoadFile = () => {
@@ -44,7 +50,6 @@ export function IdsPanel({ components }: IdsPanelProps) {
 
     setLoading(true);
     setError(null);
-
     try {
       const results = await params.applyRequirements(idsFile.text);
       setSpecResults(results);
@@ -55,21 +60,42 @@ export function IdsPanel({ components }: IdsPanelProps) {
     }
   };
 
-  const handleToggleGhost = async () => {
+  const handleHistoryCheck = async (i: number) => {
     const params = getParams();
-    if (!params) return;
-    const next = !ghostMode;
-    await params.setGhostMode(next);
-    setGhostMode(next);
+    if (!params) { setError("IdsParameters component not found"); return; }
+    try {
+      await params.applyHistoryRequirements(specResults, i);
+    } catch (e: any) {
+      setError(String(e?.message ?? e));
+    }
+  };
+
+  const handleToggleGhost = async () => {
+    const hl = getHl();
+    if (!hl) return;
+    try {
+      if (ghostMode) {
+        await hl.unghost();
+      } else {
+        await hl.ghost();
+      }
+      setGhostMode(!ghostMode);
+    } catch (e: any) {
+      setError(String(e?.message ?? e));
+    }
   };
 
   const handleClear = async () => {
-    const params = getParams();
-    if (!params) return;
-    await params.clear();
-    setGhostMode(false);
-    setSpecResults([]);
-    setError(null);
+    const hl = getHl();
+    if (!hl) return;
+    try {
+      await hl.reset();
+      setGhostMode(false);
+      setSpecResults([]);
+      setError(null);
+    } catch (e: any) {
+      setError(String(e?.message ?? e));
+    }
   };
 
   const passCount = (r: SpecResult) =>
@@ -116,11 +142,11 @@ export function IdsPanel({ components }: IdsPanelProps) {
 
         <div style={s.actions}>
           <Btn onClick={handleToggleGhost} disabled={disabled} color="#7c3aed">
-            {ghostMode ? "Restore" : "Ghost"}
+            {ghostMode ? "Unghost" : "Ghost"}
           </Btn>
-          {hasResults && (
-            <Btn onClick={handleClear} color={colors.textMuted}>Clear</Btn>
-          )}
+          <Btn onClick={handleClear} disabled={disabled} color={colors.textMuted}>
+            Clear
+          </Btn>
         </div>
       </div>
 
@@ -155,6 +181,13 @@ export function IdsPanel({ components }: IdsPanelProps) {
                   <span style={s.fail}>✗ {fail} fail</span>
                   <span style={s.pct}>{pct}%</span>
                 </div>
+                <button
+                  onClick={() => handleHistoryCheck(i)}
+                  disabled={disabled}
+                  style={{ ...s.stepBtn, marginTop: 8 }}
+                >
+                  Show Check
+                </button>
               </div>
             );
           })

@@ -58,7 +58,7 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
     }
   });
 
-    // Register IdsParameters so components.get(IdsParameters) works everywhere
+  // Register IdsParameters so components.get(IdsParameters) works everywhere
   new IdsParameters(components);
 
   return { components, world, fragments, container, dispose: () => components.dispose() };
