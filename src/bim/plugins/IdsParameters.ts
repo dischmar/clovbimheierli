@@ -1,5 +1,4 @@
 import * as OBC from "@thatopen/components";
-import * as FRAGS from "@thatopen/fragments";
 import type { SpecResult } from "../../types/ifc";
 import { FrontFunctions } from "./FrontFunctions";
 
