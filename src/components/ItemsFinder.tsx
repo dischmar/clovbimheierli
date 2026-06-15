@@ -44,7 +44,7 @@ export function FinderPanel({ components }: FinderPanelProps) {
 
       finder.create(QUERY_NAME, [
         {
-          categories: [/WALL/],
+          categories: [/WALL/,/SLAB/,/BEAM/,/COLUMN/,/DOOR/,/WINDOW/],
           relation: {
             name: "IsDefinedBy",
             query: {
@@ -198,7 +198,7 @@ function Input({ value, onChange, onEnter }: InputProps) {
       value={value}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
-      placeholder="9304HWa0000012579"
+      placeholder="z.B. 9304HWa0000012579"
       maxLength={50}
       style={s.input}
     />

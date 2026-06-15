@@ -5,8 +5,9 @@ import { PropertiesPanel } from "./PropertiesPanel";
 import { IdsPanel } from "./IdsPanel";
 import { ClassifierPanel } from "./ClassifierPanel";
 import { FinderPanel } from "./ItemsFinder";
+import { AttributeChecker } from "./AttributeChecker_old";
 
-type ActivePanel = "properties" | "ids" | "classifier" | "finder" | null;
+type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | null;
 
 export default function BimViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +55,11 @@ export default function BimViewer() {
               active={activePanel === "classifier"}
               onClick={() => togglePanel("classifier")}
             />
-
+            <PanelToggle
+              label="HeierliChecker"
+              active={activePanel === "checker"}
+              onClick={() => togglePanel("checker")}
+            />
             <PanelToggle
               label="Finder"
               active={activePanel === "finder"}
@@ -108,6 +113,10 @@ export default function BimViewer() {
 
         {activePanel === "finder" && (
           <FinderPanel components={components} />
+        )}
+
+                {activePanel === "checker" && (
+          <AttributeChecker components={components} />
         )}
 
       </div>
