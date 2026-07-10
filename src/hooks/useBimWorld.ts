@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import * as OBC from "@thatopen/components";
-import { createBimWorld, BimWorld } from "../bim/world";
+import { createBimWorld, BimWorld } from "../core/world";
+import { loadIfc } from "../core/ifc-loader";
 
 export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>) {
   const worldRef = useRef<BimWorld | null>(null);
@@ -32,7 +32,7 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
     };
   }, []);
 
-  const loadIfc = useCallback(async (file: File) => {
+  const loadIfcFile = useCallback(async (file: File) => {
     const bimWorld = worldRef.current;
     if (!bimWorld) return;
 
@@ -41,24 +41,7 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
     setError(null);
 
     try {
-      const { components } = bimWorld;
-      const ifcLoader = components.get(OBC.IfcLoader);
-
-      await ifcLoader.setup({ autoSetWasm: false, wasm: { path: "/", absolute: true } });
-
-      const buffer = await file.arrayBuffer();
-      await ifcLoader.load(new Uint8Array(buffer), false, file.name, {
-        processData: { progressCallback: (p: number) => setProgress(Math.round(p * 100)) },
-      });
-
-      // const bbox = components.get(OBC.BoundingBoxer);
-      // const [model] = bimWorld.fragments.list.values();
-      // if (model) {
-      //   bbox.add(model);
-      //   await world.camera.controls.fitToSphere(bbox.getSphere(), true);
-      //   bbox.reset();
-      // }
-
+      await loadIfc(bimWorld.components, file, setProgress);
       setModelLoaded(true);
     } catch (err) {
       setError(`Failed to load IFC: ${err}`);
@@ -68,5 +51,5 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
     }
   }, []);
 
-  return { worldRef, ready, loading, progress, error, modelLoaded, loadIfc };
+  return { worldRef, ready, loading, progress, error, modelLoaded, loadIfc: loadIfcFile };
 }

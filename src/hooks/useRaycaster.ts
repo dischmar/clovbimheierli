@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import * as THREE from "three";
 import * as FRAGS from "@thatopen/fragments";
-import { BimWorld } from "../bim/world";
+import { BimWorld } from "../core/world";
 import type { SelectedItem } from "../types/ifc";
 
 export type { SelectedItem };

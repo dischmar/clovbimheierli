@@ -1,4 +1,4 @@
-import BimViewer from "./components/BimViewer";
+import BimViewer from "./BimViewer";
 
 export default function App() {
   return <BimViewer />;
