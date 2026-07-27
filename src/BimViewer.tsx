@@ -15,7 +15,6 @@ export default function BimViewer() {
   const { worldRef, ready, loading, progress, error, modelLoaded, loadIfc } = useBimWorld(containerRef);
   const { selected, clearSelection } = useRaycaster(worldRef);
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
-  const [topBar, setTopBar] = useState(true);
 
 
   const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
