@@ -3,10 +3,10 @@ import { useBimWorld } from "./hooks/useBimWorld";
 import { useRaycaster } from "./hooks/useRaycaster";
 import { PropertiesPanel } from "./features/properties/PropertiesPanel";
 import { IdsPanel } from "./features/ids/IdsPanel";
-import { ClassifierTabs } from "./features/classifier/ClassifierTabs";
 import { FinderPanel } from "./features/finder/FinderPanel";
 import { AttributeChecker } from "./features/checker/AttributeChecker";
 import { BoundingBoxerPanel } from "./features/bounding-boxer/BoundingBoxerPanel";
+import { ClassifierTabbedPanel } from "./features/classifier/ClassifierTabbedPanel";
 
 type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | "boundingboxer" | null;
 
@@ -15,6 +15,8 @@ export default function BimViewer() {
   const { worldRef, ready, loading, progress, error, modelLoaded, loadIfc } = useBimWorld(containerRef);
   const { selected, clearSelection } = useRaycaster(worldRef);
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+  const [topBar, setTopBar] = useState(true);
+
 
   const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -114,7 +116,7 @@ export default function BimViewer() {
         )}
 
         {activePanel === "classifier" && (
-          <ClassifierTabs components={components} />
+          <ClassifierTabbedPanel components={components} world={worldRef.current?.world ?? null} onClose={() => setActivePanel(null)} />
         )}
 
         {activePanel === "finder" && (

@@ -1,4 +1,5 @@
 import * as OBC from "@thatopen/components";
+import { LodMode } from "@thatopen/fragments";
 import { createComponents } from "./components";
 import { IdsParameters } from "../features/ids/IdsParameters";
 
@@ -43,8 +44,11 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
     fragments.core.update(true);
   });
 
+
+
   fragments.list.onItemSet.add(({ value: model }) => {
     model.useCamera(world.camera.three);
+    model.setLodMode(LodMode.DEFAULT);
     world.scene.three.add(model.object);
     fragments.core.update(true);
   });
@@ -56,6 +60,7 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
       material.polygonOffsetFactor = Math.random();
     }
   });
+
 
   // Register IdsParameters so components.get(IdsParameters) works everywhere
   new IdsParameters(components);

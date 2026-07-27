@@ -42,6 +42,8 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
 
     try {
       await loadIfc(bimWorld.components, file, setProgress);
+
+
       setModelLoaded(true);
     } catch (err) {
       setError(`Failed to load IFC: ${err}`);

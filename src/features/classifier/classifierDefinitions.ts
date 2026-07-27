@@ -130,13 +130,6 @@ export const REINFORCEMENT_CLASSIFIER_DEFINITIONS: ClassifierDefinition[] = [
   reinforcementDef("Lage", /Lage/, "Schraubbew", /Schraubbew/, "#7030a0"),
   reinforcementDef("Lage", /Lage/, "Erdbebenbew", /Erdbebenbew/, "#ff0000"),
 
-  // Positionsnr. is NOT listed here: NominalValue for Positionsnummer is an
-  // IFCINTEGER (e.g. 206), and the finder engine can only match numbers by
-  // exact equality (never by regex/range) — a code like 200 would only ever
-  // match items whose value is *exactly* 200, never 206. Grouping by "first
-  // digit" therefore needs to read each item's real value and bucket it in
-  // code; see classifyPositionsnummer.ts, wired into ClassifierPanel's
-  // dynamicStep. POSITIONSNUMMER_BUCKET_COLORS below supplies its colors.
 
   reinforcementDef("Durchmesser", /Durchmesser \[mm\]/, "Ø8", 8, "#ff00ff"),
   reinforcementDef("Durchmesser", /Durchmesser \[mm\]/, "Ø10", 10, "#7030a0"),
@@ -176,6 +169,12 @@ export const CLASSIFIER_DEFINITIONS: ClassifierDefinition[] = [
   ...REINFORCEMENT_CLASSIFIER_DEFINITIONS,
 ];
 
+// Group name used for elements that match a classification's base categories
+// but none of its specific property-value definitions (see useClassifierController's
+// handleAddDefaults, which computes and adds this leftover group).
+export const DEFAULT_GROUP_NAME = "default";
+export const DEFAULT_GROUP_COLOR = "#ff0000";
+
 // Colors for the Positionsnr. buckets built dynamically by
 // classifyPositionsnummer.ts (grouped by leading digit, e.g. 206 → "200er").
 export const POSITIONSNUMMER_BUCKET_COLORS: Record<string, string> = {
@@ -195,7 +194,8 @@ export const POSITIONSNUMMER_BUCKET_COLORS: Record<string, string> = {
 export function getClassifierColor(groupName: string): string | undefined {
   return (
     CLASSIFIER_DEFINITIONS.find((d) => d.groupName === groupName)?.color ??
-    POSITIONSNUMMER_BUCKET_COLORS[groupName]
+    POSITIONSNUMMER_BUCKET_COLORS[groupName] ??
+    (groupName === DEFAULT_GROUP_NAME ? DEFAULT_GROUP_COLOR : undefined)
   );
 }
 
