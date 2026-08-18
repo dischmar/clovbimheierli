@@ -132,6 +132,7 @@ export function FinderPanel({ components }: FinderPanelProps) {
     <Panel
       title="Allplanfinder"
       width={260}
+      side = "right"
       header={
         <>
           <div style={s.inputRow}>

@@ -1,32 +1,44 @@
-import { useRef, useCallback, useState } from "react";
+import { useRef, useMemo, useState } from "react";
 import { useBimWorld } from "./hooks/useBimWorld";
 import { useRaycaster } from "./hooks/useRaycaster";
-import { PropertiesPanel } from "./features/properties/PropertiesPanel";
 import { IdsPanel } from "./features/ids/IdsPanel";
 import { FinderPanel } from "./features/finder/FinderPanel";
 import { AttributeChecker } from "./features/checker/AttributeChecker";
 import { BoundingBoxerPanel } from "./features/bounding-boxer/BoundingBoxerPanel";
 import { ClassifierTabbedPanel } from "./features/classifier/ClassifierTabbedPanel";
+import { ModelPanel } from "./features/loaddedmodels/ModelPanel";
+import { PropertiesPanel } from "./features/properties/PropertiesPanel";
+import { ViewerToolbar } from "./features/toolbar/ViewerToolbar";
+import type { ToolbarToolContext } from "./features/toolbar/types";
 
 type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | "boundingboxer" | null;
 
 export default function BimViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { worldRef, ready, loading, progress, error, modelLoaded, loadIfc } = useBimWorld(containerRef);
-  const { selected, clearSelection } = useRaycaster(worldRef);
+  const toolActiveRef = useRef(false);
+  const { selected, clearSelection } = useRaycaster(worldRef, toolActiveRef);
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
 
-  const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) loadIfc(file);
-    e.target.value = "";
-  }, [loadIfc]);
 
   const togglePanel = (panel: ActivePanel) =>
     setActivePanel((p) => (p === panel ? null : panel));
 
   const components = worldRef.current?.components ?? null;
+
+  // Memoized so its identity is stable across re-renders (e.g. IFC loads) that don't
+  // actually change the world — otherwise useViewerToolbar rebuilds its tools and
+  // silently deactivates whichever one (Slice, Measure) was active.
+  const toolbarCtx: ToolbarToolContext | null = useMemo(
+    () =>
+      ready && worldRef.current && containerRef.current
+        ? { components: worldRef.current.components, world: worldRef.current.world, container: containerRef.current }
+        : null,
+    [ready]
+  );
+
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#0d0d14", overflow: "hidden" }}>
@@ -35,14 +47,9 @@ export default function BimViewer() {
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 16px", height: 48, flexShrink: 0, background: "#12121e", borderBottom: "1px solid #1e1e38" }}>
         <span style={{ color: "#a78bfa", fontWeight: 700, fontSize: 14, fontFamily: "monospace", letterSpacing: 1, marginRight: 4 }}>HeierliBIM</span>
 
-        <label style={{ padding: "5px 14px", borderRadius: 6, background: "#6d28d9", color: "#fff", fontSize: 12, fontWeight: 600, fontFamily: "monospace", cursor: !ready || loading ? "not-allowed" : "pointer", opacity: !ready || loading ? 0.5 : 1, userSelect: "none" }}>
-          {loading ? `Converting… ${progress}%` : "Load IFC"}
-          <input type="file" accept=".ifc" hidden disabled={!ready || loading} onChange={onFileChange} />
-        </label>
-
         {modelLoaded && (
           <>
-            <PanelToggle
+                      <PanelToggle
               label="Properties"
               active={activePanel === "properties"}
               onClick={() => togglePanel("properties")}
@@ -90,17 +97,10 @@ export default function BimViewer() {
       {/* Main */}
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
-        {/* 3D Viewport */}
-        <div ref={containerRef} style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-          {!ready && (
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#a78bfa", fontSize: 14, fontFamily: "monospace", background: "#0d0d14", pointerEvents: "none" }}>
-              Initialising engine…
-            </div>
-          )}
-        </div>
 
-        {/* Panels — always mounted when active, never conditional on selection */}
-        {activePanel === "properties" && (
+
+        {/* Always-on left panel */}
+        {activePanel === "classifier" && (
           <PropertiesPanel
             selected={selected ?? null}
             onClose={() => {
@@ -109,7 +109,41 @@ export default function BimViewer() {
             }}
           />
         )}
+        <div style={{ display: activePanel === "classifier" ? "none" : "contents" }}>
+          <ModelPanel
+            components={components}
+            loading={loading}
+            onLoadIfc={loadIfc}
+            selected={selected ?? null}
+            onClearSelection={clearSelection}
+            activatedPanel={activePanel ?? ""}
+          />
+        </div>
 
+        {/* 3D Viewport */}
+        <div ref={containerRef} style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+          {!ready && (
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "#a78bfa", fontSize: 14, fontFamily: "monospace", background: "#0d0d14", pointerEvents: "none" }}>
+              Initialising engine…
+            </div>
+          )}
+          <ViewerToolbar
+            ctx={toolbarCtx}
+            onActiveToolChange={(id) => { toolActiveRef.current = id !== null; }}
+          />
+        </div>
+
+        {/* Panels — always mounted when active, never conditional on selection */}
+
+                {activePanel === "properties" && (
+          <PropertiesPanel
+            selected={selected ?? null}
+            onClose={() => {
+              clearSelection();
+              setActivePanel(null);
+            }}
+          />
+        )}
         {activePanel === "ids" && (
           <IdsPanel components={components} />
         )}

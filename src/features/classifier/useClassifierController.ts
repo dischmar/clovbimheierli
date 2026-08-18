@@ -56,7 +56,7 @@ export function useClassifierController({ components, world = null, config }: Us
       }
     }
     setGroups(entries);
-    console.log(groups)
+
   }, [components, definitions, includeGeneralDefaults, extraClassifications]);
 
   useEffect(() => {

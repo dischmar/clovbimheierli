@@ -10,10 +10,11 @@
     "postinstall": "node scripts/copy-assets.mjs"
   },
   "dependencies": {
-    "@thatopen/components": "latest",
-    "@thatopen/components-front": "latest",
-    "@thatopen/fragments": "latest",
+    "@thatopen/components": "^3.4.8",
+    "@thatopen/components-front": "^3.4.4",
+    "@thatopen/fragments": "^3.4.7",
     "@thatopen/ui": "latest",
+    "react-icons": "^5.7.0",
     "three": "latest",
     "web-ifc": "latest"
   },

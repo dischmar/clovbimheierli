@@ -9,11 +9,13 @@ interface PanelProps {
   bodyStyle?: React.CSSProperties;
   children: React.ReactNode;
   onClose?: () => void;
+  /** Which side of the layout the panel is docked to. Defaults to "right". */
+  side?: "left" | "right";
 }
 
-export function Panel({ title, width = 280, titleAction, header, bodyStyle, children, onClose }: PanelProps) {
+export function Panel({ title, width = 280, titleAction, header, bodyStyle, children, onClose, side = "right" }: PanelProps) {
   return (
-    <div style={{ ...s.panel, width }}>
+    <div style={{ ...s.panel, width, [side === "left" ? "borderRight" : "borderLeft"]: `1px solid ${colors.border}`, order: side === "left" ? -1 : undefined }}>
       <div style={s.header}>
         <div style={s.titleRow}>
           <span style={s.title}>{title}</span>
@@ -36,7 +38,7 @@ export function Panel({ title, width = 280, titleAction, header, bodyStyle, chil
 const s: Record<string, React.CSSProperties> = {
   panel: {
     flexShrink: 0, display: "flex", flexDirection: "column",
-    background: colors.panelBg, borderLeft: `1px solid ${colors.border}`,
+    background: colors.panelBg,
     overflow: "hidden", fontFamily: "monospace",
   },
   header: { padding: "10px 12px", borderBottom: `1px solid ${colors.border}`, flexShrink: 0 },

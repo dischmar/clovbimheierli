@@ -154,7 +154,7 @@ export function BoundingBoxerPanel({ components, world }: BoundingBoxerPanelProp
       clipper.createFromNormalAndCoplanarPoint(world, normal, point);
     }
 
-    console.log(clipper);
+
 
     clipper.config.color = new THREE.Color("white");
     clipper.config.visible = true;

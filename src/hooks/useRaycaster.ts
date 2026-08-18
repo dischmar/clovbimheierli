@@ -6,7 +6,10 @@ import type { SelectedItem } from "../types/ifc";
 
 export type { SelectedItem };
 
-export function useRaycaster(worldRef: React.RefObject<BimWorld | null>) {
+export function useRaycaster(
+  worldRef: React.RefObject<BimWorld | null>,
+  suspendedRef?: React.RefObject<boolean>
+) {
   const [selected, setSelected] = useState<SelectedItem | null>(null);
 
   const clearSelection = useCallback(() => setSelected(null), []);
@@ -24,6 +27,9 @@ export function useRaycaster(worldRef: React.RefObject<BimWorld | null>) {
       let lastResult: FRAGS.RaycastResult | null = null;
 
       const onClick = async (e: MouseEvent) => {
+        // A toolbar tool (measure, slice, ...) has exclusive control of viewport clicks right now.
+        if (suspendedRef?.current) return;
+
         const mouse = new THREE.Vector2(e.clientX, e.clientY);
         const camera = world.camera.three;
 

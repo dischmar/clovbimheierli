@@ -1,6 +1,7 @@
 import * as OBC from "@thatopen/components";
 import { createComponents } from "./components";
 import { IdsParameters } from "../features/ids/IdsParameters";
+import * as THREE from "three";
 
 export interface BimWorld {
   components: OBC.Components;
@@ -21,9 +22,11 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
     OBC.SimpleRenderer
   >();
 
+  const color = new THREE.Color("rgb(100%, 96%, 86%)");
+
   world.scene = new OBC.SimpleScene(components);
   world.scene.setup();
-  world.scene.three.background = null;
+  world.scene.three.background = color;
 
   world.renderer = new OBC.SimpleRenderer(components, container);
   world.camera = new OBC.OrthoPerspectiveCamera(components);

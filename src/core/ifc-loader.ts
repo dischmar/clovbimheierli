@@ -10,7 +10,7 @@ export async function loadIfc(
   await ifcLoader.setup({ autoSetWasm: false, wasm: { path: "/", absolute: true } });
 
   const buffer = await file.arrayBuffer();
-  await ifcLoader.load(new Uint8Array(buffer), false, file.name, {
+  await ifcLoader.load(new Uint8Array(buffer), true, file.name, {
     processData: { progressCallback: (p: number) => onProgress?.(Math.round(p * 100)) },
   });
 }

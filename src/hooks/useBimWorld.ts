@@ -53,5 +53,7 @@ export function useBimWorld(containerRef: React.RefObject<HTMLDivElement | null>
     }
   }, []);
 
+
+
   return { worldRef, ready, loading, progress, error, modelLoaded, loadIfc: loadIfcFile };
 }

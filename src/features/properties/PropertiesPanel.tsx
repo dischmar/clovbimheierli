@@ -257,17 +257,17 @@ export function PropertiesPanel({ selected, onClose }: PropertiesPanelProps) {
 
 const styles: Record<string, React.CSSProperties> = {
   panel: {
-    width: 300,
+    width: 260,
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
     background: colors.panelBg,
-    borderLeft: `1px solid ${colors.border}`,
     overflow: "hidden",
     fontFamily: "monospace",
     position: "relative",
     zIndex: 10,
     pointerEvents: "all",
+    borderRight: `1px solid ${colors.border}`,
   },
   header: {
     display: "flex",
