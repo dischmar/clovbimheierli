@@ -1,9 +1,9 @@
 import { useRef, useMemo, useState } from "react";
 import { useBimWorld } from "./hooks/useBimWorld";
 import { useRaycaster } from "./hooks/useRaycaster";
-import { IdsPanel } from "./features/ids/IdsPanel";
+// import { IdsPanel } from "./features/ids/IdsPanel";
 import { FinderPanel } from "./features/finder/FinderPanel";
-import { AttributeChecker } from "./features/checker/AttributeChecker";
+// import { AttributeChecker } from "./features/checker/AttributeChecker";
 import { BoundingBoxerPanel } from "./features/bounding-boxer/BoundingBoxerPanel";
 import { ClassifierTabbedPanel } from "./features/classifier/ClassifierTabbedPanel";
 import { ModelPanel } from "./features/loaddedmodels/ModelPanel";
@@ -11,7 +11,9 @@ import { PropertiesPanel } from "./features/properties/PropertiesPanel";
 import { ViewerToolbar } from "./features/toolbar/ViewerToolbar";
 import type { ToolbarToolContext } from "./features/toolbar/types";
 
-type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | "boundingboxer" | null;
+// type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | "boundingboxer" | null;
+
+type ActivePanel = "properties" | "classifier" | "boundingboxer" | null;
 
 export default function BimViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,26 +56,26 @@ export default function BimViewer() {
               active={activePanel === "properties"}
               onClick={() => togglePanel("properties")}
             />
-            <PanelToggle
+            {/* <PanelToggle
               label="IDS"
               active={activePanel === "ids"}
               onClick={() => togglePanel("ids")}
-            />
+            /> */}
             <PanelToggle
               label="Classify"
               active={activePanel === "classifier"}
               onClick={() => togglePanel("classifier")}
             />
-            <PanelToggle
+            {/* <PanelToggle
               label="HeierliChecker"
               active={activePanel === "checker"}
               onClick={() => togglePanel("checker")}
-            />
-            <PanelToggle
+            /> */}
+            {/* <PanelToggle
               label="Finder"
               active={activePanel === "finder"}
               onClick={() => togglePanel("finder")}
-            />
+            /> */}
                         <PanelToggle
               label="Bounding"
               active={activePanel === "boundingboxer"}
@@ -130,6 +132,8 @@ export default function BimViewer() {
           <ViewerToolbar
             ctx={toolbarCtx}
             onActiveToolChange={(id) => { toolActiveRef.current = id !== null; }}
+            selected={selected ?? null}
+            onClearSelection={clearSelection}
           />
         </div>
 
@@ -144,21 +148,21 @@ export default function BimViewer() {
             }}
           />
         )}
-        {activePanel === "ids" && (
+        {/* {activePanel === "ids" && (
           <IdsPanel components={components} />
-        )}
+        )} */}
 
         {activePanel === "classifier" && (
           <ClassifierTabbedPanel components={components} world={worldRef.current?.world ?? null} onClose={() => setActivePanel(null)} />
         )}
 
-        {activePanel === "finder" && (
+        {/* {activePanel === "finder" && (
           <FinderPanel components={components} />
-        )}
+        )} */}
 
-                {activePanel === "checker" && (
+                {/* {activePanel === "checker" && (
           <AttributeChecker components={components} />
-        )}
+        )} */}
 
 
     {activePanel === "boundingboxer" && (

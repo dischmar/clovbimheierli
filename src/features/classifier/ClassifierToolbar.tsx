@@ -6,14 +6,12 @@ interface ClassifierToolbarProps {
   controller: ClassifierController;
 }
 
-/** Add Defaults / Reset Visibility actions for a single classifier controller. */
+/** Reset Visibility action for a single classifier controller (defaults are added automatically on mount). */
 export function ClassifierToolbar({ controller }: ClassifierToolbarProps) {
-  const { disabled, adding, resetting, handleAddDefaults, handleResetVisibility } = controller;
+  const { disabled, adding, resetting, handleResetVisibility } = controller;
   return (
     <div style={s.actions}>
-      <Btn onClick={handleAddDefaults} disabled={disabled || adding} color="#0f766e">
-        {adding ? "Adding…" : "Add Defaults"}
-      </Btn>
+      {adding && <span style={s.status}>Classifying…</span>}
       <Btn onClick={handleResetVisibility} disabled={disabled || resetting} color={colors.accentBold}>
         {resetting ? "Resetting…" : "Reset Visibility"}
       </Btn>
@@ -22,5 +20,6 @@ export function ClassifierToolbar({ controller }: ClassifierToolbarProps) {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  actions: { display: "flex", gap: 6, flexWrap: "wrap" },
+  actions: { display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" },
+  status: { color: colors.textMuted, fontSize: 11 },
 };

@@ -3,6 +3,7 @@ import * as OBC from "@thatopen/components";
 import { colors } from "../../styles/tokens";
 import { Panel } from "../../components/Panel";
 import type { SelectedItem } from "../../types/ifc";
+import { FinderPanel } from "../finder/FinderPanel";
 
 interface ModelPanelProps {
   components: OBC.Components | null;
@@ -89,6 +90,9 @@ export function ModelPanel({ components, loading: ifcLoading, onLoadIfc }: Model
             <input type="file" accept=".ifc" hidden disabled={disabled || ifcLoading} onChange={handleBewehrungFile} />
           </label>
         )}
+      </div>
+      <div style={{ marginTop: 20 }}>
+        <FinderPanel components={components} />
       </div>
     </Panel>
   );

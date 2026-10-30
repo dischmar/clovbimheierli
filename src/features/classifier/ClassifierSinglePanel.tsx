@@ -14,7 +14,7 @@ interface ClassifierSinglePanelProps extends ClassifierConfig {
   onClose?: () => void;
 }
 
-const DEFAULT_EMPTY_MESSAGE = 'Click "Add Defaults" to group elements by category and level';
+const DEFAULT_EMPTY_MESSAGE = 'No elements matched the category or level groups';
 
 /**
  * Self-contained classifier view: one Panel, one config, no tabs. This is the

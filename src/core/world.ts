@@ -1,6 +1,8 @@
 import * as OBC from "@thatopen/components";
+import * as FRAGS from "@thatopen/fragments";
 import { createComponents } from "./components";
-import { IdsParameters } from "../features/ids/IdsParameters";
+import { createMouseOrbitControl } from "./mouseOrbitControl";
+import { createSmoothWheelControl } from "./smoothWheelControl";
 import * as THREE from "three";
 
 export interface BimWorld {
@@ -31,6 +33,27 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
   world.renderer = new OBC.SimpleRenderer(components, container);
   world.camera = new OBC.OrthoPerspectiveCamera(components);
 
+    // Create controls
+  const smoothWheel = createSmoothWheelControl(world, components, container)
+  const mouseOrbit = createMouseOrbitControl(world, components)
+
+  // Add event listeners
+  container.addEventListener('wheel', smoothWheel.wheelHandler, { passive: false })
+  container.addEventListener('mousedown', mouseOrbit.mouseDownHandler, true)
+  container.addEventListener('mousemove', mouseOrbit.mouseMoveHandler, true)
+  container.addEventListener('touchstart', mouseOrbit.touchStartHandler, true)
+
+  // Listeners must be removed before components.dispose(): otherwise a disposed world
+  // (e.g. from a React StrictMode remount) keeps reacting to events on the same container
+  // and throws "No camera initialized!".
+  const removeControls = () => {
+    container.removeEventListener('wheel', smoothWheel.wheelHandler)
+    container.removeEventListener('mousedown', mouseOrbit.mouseDownHandler, true)
+    container.removeEventListener('mousemove', mouseOrbit.mouseMoveHandler, true)
+    container.removeEventListener('touchstart', mouseOrbit.touchStartHandler, true)
+    smoothWheel.cleanup()
+  }
+
   components.init();
   components.get(OBC.Grids).create(world);
 
@@ -51,6 +74,7 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
   fragments.list.onItemSet.add(({ value: model }) => {
     model.useCamera(world.camera.three);
     world.scene.three.add(model.object);
+    model.setLodMode(FRAGS.LodMode.ALL_VISIBLE);
     fragments.core.update(true);
   });
 
@@ -63,8 +87,7 @@ export async function createBimWorld(container: HTMLDivElement): Promise<BimWorl
   });
 
 
-  // Register IdsParameters so components.get(IdsParameters) works everywhere
-  new IdsParameters(components);
 
-  return { components, world, fragments, container, dispose: () => components.dispose() };
+
+  return { components, world, fragments, container, dispose: () => { removeControls(); components.dispose(); } };
 }

@@ -31,7 +31,7 @@ export function useClassifierController({ components, world = null, config }: Us
   const [groups, setGroups] = useState<GroupEntry[]>([]);
   const [loadingGroup, setLoadingGroup] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
-  const [adding, setAdding] = useState(false);
+  const [adding, setAdding] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [meshColorizedClassification, setMeshColorizedClassification] = useState<string | null>(null);
   const [isolatedKey, setIsolatedKey] = useState<string | null>(null);
@@ -169,6 +169,17 @@ export function useClassifierController({ components, world = null, config }: Us
       setAdding(false);
     }
   }, [components, definitions, includeGeneralDefaults, dynamicSteps, refreshGroups, buildAllGroupMeshes]);
+
+  // Run "Add Defaults" automatically once per mount, as soon as the engine is
+  // ready — opening the panel (or switching tabs, which remounts) classifies
+  // right away. The ref guards against re-running when handleAddDefaults'
+  // identity changes and against StrictMode's double effect.
+  const autoAddedRef = useRef(false);
+  useEffect(() => {
+    if (!components || autoAddedRef.current) return;
+    autoAddedRef.current = true;
+    handleAddDefaults();
+  }, [components, handleAddDefaults]);
 
   // Hides whichever classification is currently colorized (if any) and shows
   // its original geometry again, so a different classification can take over.

@@ -101,7 +101,7 @@ function Row({ label, value }: { label: string; value: string }) {
 
 function Collapsible({
   title,
-  defaultOpen = false,
+  defaultOpen = true,
   children,
 }: {
   title: string;
@@ -226,7 +226,7 @@ export function PropertiesPanel({ selected, onClose }: PropertiesPanelProps) {
             )}
 
             {psets.map((pset) => (
-              <Collapsible key={pset.name} title={pset.name} defaultOpen={false}>
+              <Collapsible key={pset.name} title={pset.name} defaultOpen={true}>
                 <table style={styles.table}>
                   <tbody>
                     {pset.props.map(([k, v]) => (
@@ -238,7 +238,7 @@ export function PropertiesPanel({ selected, onClose }: PropertiesPanelProps) {
             ))}
 
             {typeProps.length > 0 && (
-              <Collapsible title="Type Properties" defaultOpen={false}>
+              <Collapsible title="Type Properties" defaultOpen={true}>
                 <table style={styles.table}>
                   <tbody>
                     {typeProps.map(([k, v]) => (

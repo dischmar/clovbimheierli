@@ -19,7 +19,7 @@ const TAB_CONFIGS: (TabItem<TabId> & { config: ClassifierConfig })[] = [
     config: {
       definitions: CONCRETE_CLASSIFIER_DEFINITIONS,
       includeGeneralDefaults: true,
-      emptyMessage: 'Click "Add Defaults" to group elements by category, level and concrete properties',
+      emptyMessage: 'No elements matched the category, level or concrete property groups',
     },
   },
   {
@@ -29,7 +29,7 @@ const TAB_CONFIGS: (TabItem<TabId> & { config: ClassifierConfig })[] = [
       definitions: REINFORCEMENT_CLASSIFIER_DEFINITIONS,
       extraClassifications: [POSITIONSNUMMER_CLASSIFICATION],
       dynamicSteps: [classifyPositionsnummer],
-      emptyMessage: 'Click "Add Defaults" to group reinforcement elements',
+      emptyMessage: 'No reinforcement elements found',
     },
   },
 ];
