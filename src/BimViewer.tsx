@@ -2,7 +2,7 @@ import { useRef, useMemo, useState } from "react";
 import { useBimWorld } from "./hooks/useBimWorld";
 import { useRaycaster } from "./hooks/useRaycaster";
 // import { IdsPanel } from "./features/ids/IdsPanel";
-import { FinderPanel } from "./features/finder/FinderPanel";
+// import { FinderPanel } from "./features/finder/FinderPanel";
 // import { AttributeChecker } from "./features/checker/AttributeChecker";
 import { BoundingBoxerPanel } from "./features/bounding-boxer/BoundingBoxerPanel";
 import { ClassifierTabbedPanel } from "./features/classifier/ClassifierTabbedPanel";
