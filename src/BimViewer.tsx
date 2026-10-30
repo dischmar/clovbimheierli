@@ -5,6 +5,7 @@ import { useRaycaster } from "./hooks/useRaycaster";
 // import { FinderPanel } from "./features/finder/FinderPanel";
 // import { AttributeChecker } from "./features/checker/AttributeChecker";
 import { BoundingBoxerPanel } from "./features/bounding-boxer/BoundingBoxerPanel";
+import { BcfPanel } from "./features/bcf/BcfPanel";
 import { ClassifierTabbedPanel } from "./features/classifier/ClassifierTabbedPanel";
 import { ModelPanel } from "./features/loaddedmodels/ModelPanel";
 import { PropertiesPanel } from "./features/properties/PropertiesPanel";
@@ -13,7 +14,7 @@ import type { ToolbarToolContext } from "./features/toolbar/types";
 
 // type ActivePanel = "properties" | "ids" | "classifier" | "finder" | "checker" | "boundingboxer" | null;
 
-type ActivePanel = "properties" | "classifier" | "boundingboxer" | null;
+type ActivePanel = "properties" | "classifier" | "boundingboxer" | "bcf" | null;
 
 export default function BimViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,6 +81,11 @@ export default function BimViewer() {
               label="Bounding"
               active={activePanel === "boundingboxer"}
               onClick={() => togglePanel("boundingboxer")}
+            />
+            <PanelToggle
+              label="BCF"
+              active={activePanel === "bcf"}
+              onClick={() => togglePanel("bcf")}
             />
           </>
         )}
@@ -168,6 +174,10 @@ export default function BimViewer() {
     {activePanel === "boundingboxer" && (
       <BoundingBoxerPanel components={components} world={worldRef.current?.world ?? null} />
     )}
+
+        {activePanel === "bcf" && (
+          <BcfPanel components={components} world={worldRef.current?.world ?? null} onClose={() => setActivePanel(null)} />
+        )}
 
       </div>
     </div>
